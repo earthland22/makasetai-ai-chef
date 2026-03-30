@@ -317,8 +317,9 @@ export default function App() {
           <div style={{ fontSize:'13px', color:'rgba(255,255,255,0.5)', marginBottom:'36px', lineHeight:'1.8' }}>冷蔵庫の食材から献立を自動提案<br/>栄養・節約・時短アドバイスつき</div>
 
           <div style={{ background:'linear-gradient(135deg,rgba(99,179,237,0.15),rgba(144,205,244,0.08))', border:'1px solid rgba(99,179,237,0.3)', borderRadius:'16px', padding:'16px 20px', marginBottom:'20px', textAlign:'left' }}>
-            <div style={{ fontFamily:"'Noto Serif JP',serif", fontWeight:700, fontSize:'15px', color:'#fff', marginBottom:'6px' }}>🎁 7日間　無料トライアル</div>
-            <div style={{ fontSize:'12px', color:'rgba(255,255,255,0.6)', lineHeight:'1.7' }}>すべての機能が7日間無料。期間後は月額 <span style={{ color:'#63b3ed', fontWeight:700 }}>¥480</span>（いつでも解約可）</div>
+            <div style={{ fontFamily:"'Noto Serif JP',serif", fontWeight:700, fontSize:'15px', color:'#fff', marginBottom:'6px' }}>🎁 無料トライアル</div>
+            <div style={{ fontSize:'12px', color:'rgba(255,255,255,0.6)', lineHeight:'1.7' }}>すべての機能が今だけ無料！
+        <span style={{ color:'#63b3ed', fontWeight:700 }}></span></div>
             <div style={{ marginTop:'10px', display:'flex', gap:'8px', flexWrap:'wrap' }}>
               {['✅ AIシェフ会話','✅ 献立自動提案','✅ 栄養アドバイス','✅ 広告なし'].map(f => (
                 <span key={f} style={{ fontSize:'11px', background:'rgba(99,179,237,0.15)', color:'#90cdf4', borderRadius:'10px', padding:'2px 9px' }}>{f}</span>
@@ -340,7 +341,7 @@ export default function App() {
           </div>
 
           <PrimaryBtn onClick={() => setScreen('survey')}>🚀 無料体験をはじめる</PrimaryBtn>
-          <div style={{ fontSize:'11px', color:'rgba(255,255,255,0.25)', marginTop:'12px' }}>クレジットカード不要 · 7日間完全無料</div>
+          <div style={{ fontSize:'11px', color:'rgba(255,255,255,0.25)', marginTop:'12px' }}>クレジットカード不要 · </div>
         </div>
       )}
 
