@@ -72,12 +72,13 @@ setLoading(true);
 setError(null);
 try {
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 const prompt = `${selectedIngredients.join(", ")}を使ったレシピを1つ、JSON形式で教えて。 { "title": "", "description": "", "ingredients": [], "steps": [], "tips": "" }`;
 const result = await model.generateContent(prompt);
 const text = await result.response.text();
-const cleanJson = text.replace(/```json|```/g, "").trim();
-setRecipe(JSON.parse(cleanJson));
+const i = text.index0f("{");
+const j = text.lastIndex0f("}");
+setRecipe(JSON.parse(text.slice(i,j+1)));
 } catch (err) {
 setError("エラーが発生しました");
 } finally {
