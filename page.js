@@ -133,41 +133,6 @@ return (
       </div>
     </div>
   )}
-<  <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-orange-100">
-    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-      <UtensilsCrossed className="text-orange-500" /> 食材を選ぶ
-    </h2>
-    <div className="space-y-6">
-      {材料一覧.map((cat) => (
-        <div key={cat.カテゴリ}>
-          <h3 className="text-sm font-medium text-gray-500 mb-2">{cat.カテゴリ}</h3>
-          <div className="flex flex-wrap gap-2">
-            {cat.商品.map((item) => (
-              <button
-                key={item}
-                onClick={() => toggleIngredient(item)}
-                className={`px-4 py-2 rounded-full border-2 transition-all ${
-                  selectedIngredients.includes(item)
-                    ? "bg-orange-500 border-orange-500 text-white shadow-md scale-105"
-                    : "bg-white border-gray-200 text-gray-700 hover:border-orange-300"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <button
-      onClick={generateRecipe}
-      disabled={loading || selectedIngredients.length === 0}
-      className="w-full mt-8 bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg transition-colors"
-    >
-      {loading ? <Loader2 className="animate-spin" /> : "この食材でレシピを作る！"}
-    </button>
-  </div>
 
   {error && (
     <div className="bg-red-50 border-l-4 border-red-500 p-4 text-red-700 rounded-r shadow">
