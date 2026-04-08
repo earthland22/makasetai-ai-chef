@@ -107,4 +107,3 @@ className="w-full mt-8 bg-orange-600 hover:bg-orange-700 text-white font-bold py
 </div>
 );
 }
- 
