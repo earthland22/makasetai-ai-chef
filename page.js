@@ -1,67 +1,26 @@
-何も選択されていません 
-
-コンテンツへ
-Gmail でのスクリーン リーダーの使用
-4 / 169
-①
-受信トレイ
-
-篠原千恵
-1:19 (14 分前)
-To 自分
-
 "use client";
 import { useState } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Loader2, ChefHat, UtensilsCrossed, AlertCircle } from "lucide-react";
+import { Loader2, ChefHat, UtensilsCrossed } from "lucide-react";
 
 const 材料一覧 = [
-{ カテゴリ: "🥩肉類", 商品: ["鶏むね肉", "鶏もも肉", "豚こま切れ", "挽き肉", "ベーコン", "ウインナー"] },
-{ カテゴリ: "🐟魚介類", 商品: ["鮭", "さば缶", "ツナ缶", "えび", "あさり", "しらす"] },
-{ カテゴリ: "🥚卵・乳製品", 商品: ["卵", "牛乳", "豆腐", "納豆", "チーズ", "バター"] },
-{ カテゴリ: "🥦野菜", 商品: ["キャベツ", "玉ねぎ", "にんじん", "じゃがいも", "もやし", "ほうれん草", "小松菜", "ブロッコリー", "なす", "ピーマン", "大根"] },
-{ カテゴリ: "🍄きのこ・その他", 商品: ["しめじ", "えのき", "エリンギ", "椎茸", "こんにゃく", "キムチ"] },
+{ カテゴリ: "🥩肉類", 商品: ["鶏むね肉", "鶏もも肉", "豚バラ肉", "豚こま肉", "牛こま肉", "ひき肉"] },
+{ カテゴリ: "🐟魚介類", 商品: ["鮭", "さば缶", "ツナ缶", "えび", "あさり"] },
+{ カテゴリ: "🥚卵・乳製品", 商品: ["卵", "牛乳", "チーズ", "バター", "ヨーグルト"] },
+{ カテゴリ: "🥦野菜", 商品: ["キャベツ", "玉ねぎ", "人参", "じゃがいも", "ピーマン", "なす", "ほうれん草"] },
+{ カテゴリ: "🍄きのこ・その他", 商品: ["しめじ", "えのき", "豆腐", "納豆", "キムチ"] },
 ];
 
-画像
-
-新しい会話
-
-あなた専属のAIアーティストが準備完了です🎨 例えば、🐦海の上を飛ぶ鳥、🏝️島のヤシの木、🏡雪山の中の家など、あなたが作りたいものを教えてください。数秒でユニークな作品をお作りします。
-
-bot artist image
-例：ビーチで走る甘い子犬
-
-Dall-e 3
-
-10
-アップグレード
-
-
-
-im
-選択範囲を貼り付け
-たとえば
-⛵️ 海の中の船
-👩 都市の女性
-
-
-レビューを書いてクレジットを獲得しましょう ❤
-チャット
-尋ねる
-検索
-書く
-画像
-チャットファイル
-ビジョン
-代理人
-全ページ
-招待して稼ぐ
 export default function KitchenApp() {
 const [selectedIngredients, setSelectedIngredients] = useState([]);
 const [recipe, setRecipe] = useState(null);
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState(null);
+
+const toggleIngredient = (item) => {
+setSelectedIngredients(prev =>
+prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
+);
+};
 
 const generateRecipe = async () => {
 if (selectedIngredients.length === 0) {
@@ -70,59 +29,181 @@ return;
 }
 setLoading(true);
 setError(null);
+
 try {
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-const prompt = `${selectedIngredients.join(", ")}を使ったレシピを1つ、JSON形式で教えて。 { "title": "", "description": "", "ingredients": [], "steps": [], "tips": "" }`;
-const result = await model.generateContent(prompt);
-const text = await result.response.text();
-const i = text.index0f("{");
-const j = text.lastIndex0f("}");
-setRecipe(JSON.parse(text.slice(i,j+1)));
+  const response = await fetch("/api/recipe", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ingredients: selectedIngredients.join(", "),
+      conditions: "家庭で簡単に作れる美味しいレシピ"
+    }),
+  });
+
+  if (!response.ok) throw new Error("生成に失敗しました");
+
+  const data = await response.json();
+  setRecipe(data);
 } catch (err) {
-setError("エラーが発生しました");
+  console.error(err);
+  setError("レシピの生成中にエラーが発生しました");
 } finally {
-setLoading(false);
-}
+  setLoading(false);
+} 
 };
 
 return (
-<div className="min-h-screen bg-slate-900 text-slate-100 p-4">
-<header className="max-w-2xl mx-auto mb-8 text-center">
-<ChefHat size={40} className="mx-auto mb-2 text-blue-400" />
-<h1 className="text-2xl font-bold">まかせて！AIシェフ</h1>
-</header>
-<main className="max-w-2xl mx-auto space-y-6">
-<section className="bg-slate-800 rounded-xl p-4">
-<h2 className="flex items-center gap-2 font-bold mb-4"><UtensilsCrossed size={20} /> 食材を選ぶ</h2>
-{材料一覧.map((cat) => (
-<div key={cat.カテゴリ} className="mb-4">
-<p className="text-xs text-slate-400 mb-2">{cat.カテゴリ}</p>
-<div className="flex flex-wrap gap-2">
-{cat.商品.map((item) => (
-<button key={item} onClick={() => setSelectedIngredients(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item])}
-className={`px-3 py-1.5 rounded-full text-sm ${selectedIngredients.includes(item) ? "bg-blue-600" : "bg-slate-700"}`}>{item}</button>
-))}
+<div className="max-w-4xl mx-auto p-6 space-y-8 bg-orange-50 min-h-screen">
+<div className="text-center space-y-2">
+<h1 className="text-4xl font-bold text-orange-600 flex items-center justify-center gap-2">
+<ChefHat size={40} /> まかせて！AIシェフ
+</h1>
+<p className="text-gray-600">冷蔵庫にあるものを選んで、AIに献立を相談しよう！</p>
 </div>
-</div>
-))}
-</section>
+  <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-orange-100">
+    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+      <UtensilsCrossed className="text-orange-500" /> 食材を選ぶ
+    </h2>
+    <div className="space-y-6">
+      {材料一覧.map((cat) => (
+        <div key={cat.カテゴリ}>
+          <h3 className="text-sm font-medium text-gray-500 mb-2">{cat.カテゴリ}</h3>
+          <div className="flex flex-wrap gap-2">
+            {cat.商品.map((item) => (
+              <button
+                key={item}
+                onClick={() => toggleIngredient(item)}
+                className={`px-4 py-2 rounded-full border-2 transition-all ${
+                  selectedIngredients.includes(item)
+                    ? "bg-orange-500 border-orange-500 text-white shadow-md scale-105"
+                    : "bg-white border-gray-200 text-gray-700 hover:border-orange-300"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
 
-<button onClick={generateRecipe} disabled={loading} className="w-full bg-blue-500 py-4 rounded-xl font-bold">
-{loading ? <Loader2 className="animate-spin mx-auto" /> : "レシピを生成する"}
-</button>
-{recipe && (
-<article className="bg-white text-slate-900 rounded-2xl p-6 mt-6">
-<h2 className="text-2xl font-bold text-blue-600">{recipe.title}</h2>
-<p className="my-4">{recipe.description}</p>
-<h3 className="font-bold border-l-4 border-blue-500 pl-2 mb-2">材料</h3>
-<ul className="list-disc pl-5 mb-4">{recipe.ingredients.map((ing, i) => <li key={i}>{ing}</li>)}</ul>
-<h3 className="font-bold border-l-4 border-blue-500 pl-2 mb-2">作り方</h3>
-<ol className="list-decimal pl-5">{recipe.steps.map((step, i) => <li key={i} className="mb-2">{step}</li>)}</ol>
-</article>
-)}
-</main>
+    <button
+      onClick={generateRecipe}
+      disabled={loading || selectedIngredients.length === 0}
+      className="w-full mt-8 bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg transition-colors"
+    >
+      {loading ? <Loader2 className="animate-spin" /> : "この食材でレシピを作る！"}
+    </button>
+  </div>
+
+  {error && (
+    <div className="bg-red-50 border-l-4 border-red-500 p-4 text-red-700 rounded-r shadow">
+      {error}
+    </div>
+  )}
+
+  {recipe && (
+    <div className="bg-white p-8 rounded-2xl shadow-2xl border-2 border-orange-200 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <h2 className="text-3xl font-bold text-orange-700 mb-6 border-b-4 border-orange-100 pb-2">
+        ✨ {recipe.title}
+      </h2>
+      <div className="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 className="font-bold text-lg mb-3 text-orange-600 flex items-center gap-2">
+            🍳 材料
+          </h3>
+          <ul className="list-disc list-inside space-y-2 text-gray-700 bg-orange-50 p-4 rounded-xl">
+            {recipe.ingredients.map((ing, i) => (
+              <li key={i}>{ing}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3 className="font-bold text-lg mb-3 text-orange-600 flex items-center gap-2">
+            📝 作り方
+          </h3>
+          <ol className="list-decimal list-inside space-y-3 text-gray-700">
+            {recipe.steps.map((step, i) => (
+              <li key={i} className="pl-2 border-b border-gray-100 pb-2">{step}</li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  )}
+<  <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-orange-100">
+    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+      <UtensilsCrossed className="text-orange-500" /> 食材を選ぶ
+    </h2>
+    <div className="space-y-6">
+      {材料一覧.map((cat) => (
+        <div key={cat.カテゴリ}>
+          <h3 className="text-sm font-medium text-gray-500 mb-2">{cat.カテゴリ}</h3>
+          <div className="flex flex-wrap gap-2">
+            {cat.商品.map((item) => (
+              <button
+                key={item}
+                onClick={() => toggleIngredient(item)}
+                className={`px-4 py-2 rounded-full border-2 transition-all ${
+                  selectedIngredients.includes(item)
+                    ? "bg-orange-500 border-orange-500 text-white shadow-md scale-105"
+                    : "bg-white border-gray-200 text-gray-700 hover:border-orange-300"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <button
+      onClick={generateRecipe}
+      disabled={loading || selectedIngredients.length === 0}
+      className="w-full mt-8 bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg transition-colors"
+    >
+      {loading ? <Loader2 className="animate-spin" /> : "この食材でレシピを作る！"}
+    </button>
+  </div>
+
+  {error && (
+    <div className="bg-red-50 border-l-4 border-red-500 p-4 text-red-700 rounded-r shadow">
+      {error}
+    </div>
+  )}
+
+  {recipe && (
+    <div className="bg-white p-8 rounded-2xl shadow-2xl border-2 border-orange-200 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <h2 className="text-3xl font-bold text-orange-700 mb-6 border-b-4 border-orange-100 pb-2">
+        ✨ {recipe.title}
+      </h2>
+      <div className="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 className="font-bold text-lg mb-3 text-orange-600 flex items-center gap-2">
+            🍳 材料
+          </h3>
+          <ul className="list-disc list-inside space-y-2 text-gray-700 bg-orange-50 p-4 rounded-xl">
+            {recipe.ingredients.map((ing, i) => (
+              <li key={i}>{ing}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3 className="font-bold text-lg mb-3 text-orange-600 flex items-center gap-2">
+            📝 作り方
+          </h3>
+          <ol className="list-decimal list-inside space-y-3 text-gray-700">
+            {recipe.steps.map((step, i) => (
+              <li key={i} className="pl-2 border-b border-gray-100 pb-2">{step}</li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  )}
 </div>
 );
 }
-
